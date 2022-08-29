@@ -1,4 +1,4 @@
-import { Header, Filter, SalesByDate, SalesSummary, PieChartCard } from './components';
+import { Header, Filter, SalesByDate, SalesSummary, PieChartCard, SalesTable } from './components';
 import './App.css';
 
 function App() {
@@ -21,6 +21,7 @@ function App() {
             series={[70, 20, 10]}
           />
         </div>
+        <SalesTable />
       </main>
     </>
   );
