@@ -1,4 +1,4 @@
-import { Header, Filter } from './components';
+import { Header, Filter, SalesByDate } from './components';
 import './App.css';
 
 function App() {
@@ -7,6 +7,7 @@ function App() {
       <Header />
       <main className="App__container">
         <Filter />
+        <SalesByDate />
       </main>
     </>
   );
