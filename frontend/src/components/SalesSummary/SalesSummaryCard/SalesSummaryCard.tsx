@@ -3,7 +3,7 @@ import './SalesSummaryCard.scss';
 type SalesSummaryCardProps = {
   icon: React.ReactNode;
   label: string;
-  value: string;
+  value: number | string;
 };
 
 const SalesSummaryCard = ({ label, value, icon }: SalesSummaryCardProps) => {

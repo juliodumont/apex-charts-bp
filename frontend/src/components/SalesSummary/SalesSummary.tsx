@@ -1,14 +1,34 @@
+import { useMemo, useEffect, useState } from 'react';
 import { AvatarIcon, BarChartIcon, DoneIcon, SyncIcon } from '../../assets/Icons';
+import { FilterData, SalesSummaryData } from '../../types';
+import { buildFilterParams, makeRequest } from '../../utils/request';
 import './SalesSummary.scss';
 import SalesSummaryCard from './SalesSummaryCard/SalesSummaryCard';
 
-const SalesSummary = () => {
+type Props = {
+  filterData?: FilterData;
+};
+
+const SalesSummary = ({ filterData }: Props) => {
+  const params = useMemo(() => buildFilterParams(filterData), [filterData]);
+  const [summary, setSummary] = useState<SalesSummaryData>({
+    avg: 0,
+    max: 0,
+    min: 0,
+    count: 0
+  });
+
+  useEffect(() => {
+    makeRequest.get<SalesSummaryData>('/sales/summary', { params }).then((response) => {
+      setSummary(response.data);
+    });
+  }, [params]);
   return (
     <div className="sales-summary-container">
-      <SalesSummaryCard value="534.00" label="Média" icon={<DoneIcon />} />
-      <SalesSummaryCard value="44434" label="Quantidade" icon={<SyncIcon />} />
-      <SalesSummaryCard value="434.00" label="Mínima" icon={<BarChartIcon />} />
-      <SalesSummaryCard value="3434.00" label="Máxima" icon={<AvatarIcon />} />
+      <SalesSummaryCard value={summary?.avg.toFixed(2)} label="Média" icon={<DoneIcon />} />
+      <SalesSummaryCard value={summary?.count} label="Quantidade" icon={<SyncIcon />} />
+      <SalesSummaryCard value={summary?.min} label="Mínima" icon={<BarChartIcon />} />
+      <SalesSummaryCard value={summary?.max} label="Máxima" icon={<AvatarIcon />} />
     </div>
   );
 };
