@@ -1,8 +1,8 @@
 import './SalesByDate.scss';
 import { buildChartSeries, chartOptions, sumSalesByDate } from './helpers';
 import ReactApexChart from 'react-apexcharts';
-import { useEffect, useState } from 'react';
-import { makeRequest } from '../../utils/request';
+import { useEffect, useMemo, useState } from 'react';
+import { buildFilterParams, makeRequest } from '../../utils/request';
 import { ChartSeriesData, FilterData, SalesByDate } from '../../types';
 import { formatDate, formatPrice } from '../../utils/formatters';
 
@@ -14,14 +14,14 @@ const SalesByDateComponent = ({ filterData }: Props) => {
   const [chartSeries, setChartSeries] = useState<ChartSeriesData[]>([]);
   const [chartSum, setChartSum] = useState<number>(0);
 
+  const params = useMemo(() => buildFilterParams(filterData), [filterData]);
+
   useEffect(() => {
-    makeRequest
-      .get<SalesByDate[]>('/sales/by-date?minDate=2017-01-01&maxDate=2017-01-31&gender=FEMALE')
-      .then((response) => {
-        setChartSeries(buildChartSeries(response.data));
-        setChartSum(sumSalesByDate(response.data));
-      });
-  }, []);
+    makeRequest.get<SalesByDate[]>('/sales/by-date', { params }).then((response) => {
+      setChartSeries(buildChartSeries(response.data));
+      setChartSum(sumSalesByDate(response.data));
+    });
+  }, [params]);
 
   return (
     <div className="sales-by-date-container base-card">
