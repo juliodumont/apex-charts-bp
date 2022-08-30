@@ -8,7 +8,7 @@ type PieChartCardProps = {
   series: number[];
 };
 
-const PieChartCard = ({ labels, name, series }: PieChartCardProps) => {
+const PieChartCard = ({ labels = [], name, series = [] }: PieChartCardProps) => {
   return (
     <div className="pie-chart-card base-card">
       <ReactApexChart

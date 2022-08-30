@@ -15,7 +15,8 @@ const SalesSummary = ({ filterData }: Props) => {
     avg: 0,
     max: 0,
     min: 0,
-    count: 0
+    count: 0,
+    sum: 0
   });
 
   useEffect(() => {
@@ -25,7 +26,11 @@ const SalesSummary = ({ filterData }: Props) => {
   }, [params]);
   return (
     <div className="sales-summary-container">
-      <SalesSummaryCard value={summary?.avg.toFixed(2)} label="Média" icon={<DoneIcon />} />
+      <SalesSummaryCard
+        value={summary?.avg ? summary?.avg.toFixed(2) : 0}
+        label="Média"
+        icon={<DoneIcon />}
+      />
       <SalesSummaryCard value={summary?.count} label="Quantidade" icon={<SyncIcon />} />
       <SalesSummaryCard value={summary?.min} label="Mínima" icon={<BarChartIcon />} />
       <SalesSummaryCard value={summary?.max} label="Máxima" icon={<AvatarIcon />} />

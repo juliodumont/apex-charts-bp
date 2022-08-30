@@ -1,10 +1,36 @@
 import { Header, Filter, SalesByDate, SalesSummary, PieChartCard, SalesTable } from './components';
 import './App.css';
-import { useState } from 'react';
-import { FilterData } from './types';
+import { useEffect, useMemo, useState } from 'react';
+import { FilterData, PieChartConfig, SalesByPaymentMethod, SalesByStore } from './types';
+import { buildFilterParams, makeRequest } from './utils/request';
+import { buildSalesByPaymentMethod, buildSalesByStoreChart } from './helpers';
 
 function App() {
   const [filterData, setFilterData] = useState<FilterData>();
+  const [salesByStore, setSalesByStore] = useState<PieChartConfig>({
+    labels: [],
+    series: []
+  });
+  const [salesByPaymentMethod, setSalesByPaymentMethod] = useState<PieChartConfig>({
+    labels: [],
+    series: []
+  });
+
+  const params = useMemo(() => buildFilterParams(filterData), [filterData]);
+
+  useEffect(() => {
+    makeRequest.get<SalesByStore[]>('/sales/by-store', { params }).then((response) => {
+      setSalesByStore(buildSalesByStoreChart(response.data));
+    });
+  }, [params]);
+
+  useEffect(() => {
+    makeRequest
+      .get<SalesByPaymentMethod[]>('/sales/by-payment-method', { params })
+      .then((response) => {
+        setSalesByPaymentMethod(buildSalesByPaymentMethod(response.data));
+      });
+  }, [params]);
 
   const onFilterChange = (filter: FilterData) => {
     setFilterData(filter);
@@ -18,15 +44,11 @@ function App() {
         <SalesByDate filterData={filterData} />
         <div className="sales-overview-container">
           <SalesSummary filterData={filterData} />
-          <PieChartCard
-            name="Lojas"
-            labels={['Sobradinho', 'Brasilia', 'Planaltina']}
-            series={[40, 30, 30]}
-          />
+          <PieChartCard name="Lojas" labels={salesByStore.labels} series={salesByStore.series} />
           <PieChartCard
             name="Pagamento"
-            labels={['Credito', 'Debito', 'Dinheiro']}
-            series={[70, 20, 10]}
+            labels={salesByPaymentMethod.labels}
+            series={salesByPaymentMethod.series}
           />
         </div>
         <SalesTable />
